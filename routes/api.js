@@ -10,7 +10,7 @@ const apiController = require("../controllers/apiController");
 // router.get("/detail-page/:id", apiController.detailPage);
 // router.post("/booking-page", upload, apiController.bookingPage);
 router.get("/home", apiController.home);
-router.get("/subMateri", apiController.subMateri);
+router.get("/isi-sub-materi/:id", apiController.isiSub);
 router.get("/detail-materi/:id", apiController.detailMateri);
 
 module.exports = router;

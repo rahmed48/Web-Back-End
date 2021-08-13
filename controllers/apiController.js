@@ -29,11 +29,12 @@ module.exports = {
     }
   },
 
-  subMateri: async (req, res) => {
-    try {
-      const subMateri = await Sub.find();
+  isiSub: async (req, res) => {
+    try {      
+      const { id } = req.params;
+      const isiSub = await Sub.findOne({ _id: id });
       res.status(200).json({
-        subMateri,
+        isiSub,
       });
     } catch (error) {
       console.log(error);
