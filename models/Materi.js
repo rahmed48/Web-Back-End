@@ -6,10 +6,12 @@ const materiSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  categoryId: {
-    type: ObjectId,
-    ref: "Category",
-  },
+  subMateriId: [
+    {
+      type: ObjectId,
+      ref: "Sub",
+    },
+  ],
   kataKunci: [
     {
       type: String,
