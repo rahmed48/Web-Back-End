@@ -8,7 +8,7 @@ const subSchema = new mongoose.Schema({
   },
   isi: {
     type: String,
-    required: true,
+    // required: true,
   },
   materiId: {
     type: ObjectId,

@@ -4,9 +4,9 @@ const fs = require("fs-extra");
 const path = require("path");
 const Toko = require("../models/Toko");
 const Users = require("../models/Users");
+const Materi = require("../models/Materi");
+const Sub = require("../models/Sub");
 const bcrypt = require("bcrypt");
-const Pesanan = require("../models/Pesanan");
-const Cart = require("../models/Cart")
 
 module.exports = {
   viewSignin: async (req, res) => {
@@ -28,7 +28,6 @@ module.exports = {
   },
   actionSignin: async (req, res) => {
     try {
-
       const { username, password } = req.body;
       const user = await Users.findOne({ username: username });
       if (!user) {
@@ -44,7 +43,7 @@ module.exports = {
       }
       const status = await Users.findOne({ username: username });
       status.status = "Aktif";
-      await status.save()
+      await status.save();
 
       req.session.user = {
         id: user.id,
@@ -68,10 +67,9 @@ module.exports = {
       const { id } = req.body;
       const status = await Users.findOne({ _id: id });
       status.status = "Non Aktif";
-      await status.save()
+      await status.save();
       req.session.destroy();
       res.redirect("/admin/signin");
-
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -79,6 +77,38 @@ module.exports = {
     }
   },
 
+  viewMateri: async (req, res) => {
+    try {
+      const materi = await Sub.find();
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
+      res.render("admin/materi/view_materi", {
+        title: "MTK | Materi",
+        materi,
+        users: req.session.user,
+        alert
+      });
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/materi");
+    }
+  },
+  addMateri: async (req, res) => {
+    try {
+      const { judul, isi } = req.body;
+      console.log(judul, isi);
+      await Sub.create({ judul, isi });
+      req.flash("alertMessage", "Success Add Materi");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/materi");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/materi");
+    }
+  },
 
   viewDashboard: async (req, res) => {
     try {
@@ -87,7 +117,7 @@ module.exports = {
       // const item = await Item.find();
       res.render("admin/dashboard/view_dashboard", {
         title: "My Menu | Dashboard",
-        users: req.session.user
+        users: req.session.user,
         // member,
         // booking,
         // item,
@@ -162,7 +192,10 @@ module.exports = {
   //  <---------- MODULE ITEM ---------->
   viewItem: async (req, res) => {
     try {
-      const item = await Item.find().populate({ path: "categoryId", select: "id name" });
+      const item = await Item.find().populate({
+        path: "categoryId",
+        select: "id name",
+      });
       const category = await Category.find();
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
@@ -258,7 +291,7 @@ module.exports = {
         title: "My Menu | Toko",
         alert,
         toko,
-        users: req.session.user
+        users: req.session.user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -296,7 +329,7 @@ module.exports = {
         title: "My Menu | Toko",
         alert,
         user,
-        users: req.session.user
+        users: req.session.user,
       });
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
@@ -311,7 +344,6 @@ module.exports = {
       req.flash("alertMessage", "Success Add User");
       req.flash("alertStatus", "success");
       res.redirect("/admin/user");
-
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -337,7 +369,10 @@ module.exports = {
   //  <---------- MODULE ITEM ---------->
   viewStok: async (req, res) => {
     try {
-      const item = await Item.find().populate({ path: "categoryId", select: "id name" });
+      const item = await Item.find().populate({
+        path: "categoryId",
+        select: "id name",
+      });
       const category = await Category.find();
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
@@ -384,7 +419,6 @@ module.exports = {
     }
   },
   //  <---------- MODULE ITEM ---------->
-
 
   //  <---------- MODULE PESANAN ---------->
 

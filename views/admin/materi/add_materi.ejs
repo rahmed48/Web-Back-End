@@ -1,0 +1,28 @@
+<div
+  class="tab-pane fade"
+  id="add-item"
+  role="tabpanel"
+  aria-labelledby="profile-tab"
+>
+  <div class="card shadow mb-4 mt-2">
+    <div class="card-body">
+      <form action="/admin/materi" method="POST">
+        <div class="form-group">
+          <label for="judul">Judul</label>
+          <input
+            type="text"
+            class="form-control"
+            id="judul"
+            name="judul"
+            placeholder="Enter Title"
+            required
+          />
+        <div class="form-group">
+          <label for="isi">Isi</label>
+          <textarea name="isi" id="isi" class="form-control" required> </textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+      </form>
+    </div>
+  </div>
+</div>

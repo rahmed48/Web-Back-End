@@ -10,6 +10,9 @@ router.use(auth);
 router.put("/logout", adminController.actionLogout);
 router.get("/dashboard", adminController.viewDashboard);
 
+router.get("/materi", adminController.viewMateri);
+router.post("/materi", adminController.addMateri);
+// router.delete("/materi/:id", adminController.deleteCategory);
 // ENDPOINT CATEGORY
 
 router.get("/category", adminController.viewCategory);
