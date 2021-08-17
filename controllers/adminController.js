@@ -79,16 +79,22 @@ module.exports = {
 
   viewMateri: async (req, res) => {
     try {
-      const materi = await Sub.find();
+      const sub = await Sub.find().populate({
+        path: "materiId",
+        select: "title",
+      });
+      const materi = await Materi.find();
       const alertMessage = req.flash("alertMessage");
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
       res.render("admin/materi/view_materi", {
         title: "MTK | Materi",
+        sub,
         materi,
         users: req.session.user,
-        alert
+        alert,
       });
+      console.log(sub);
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
@@ -97,9 +103,15 @@ module.exports = {
   },
   addMateri: async (req, res) => {
     try {
-      const { judul, isi } = req.body;
-      console.log(judul, isi);
-      await Sub.create({ judul, isi });
+      const { judul, isi, materiId } = req.body;
+      const materi = await Materi.findOne({ _id: materiId });
+      const newSub = { judul, isi, materiId };
+
+      const sub = await Sub.create(newSub);
+
+      materi.subMateriId.push({ _id: sub._id });
+      await materi.save();
+      await sub.save();
       req.flash("alertMessage", "Success Add Materi");
       req.flash("alertStatus", "success");
       res.redirect("/admin/materi");

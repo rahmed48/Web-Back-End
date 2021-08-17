@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
 
-const subSchema = new mongoose.Schema({
+const latihanSchema = new mongoose.Schema({
   judul: {
     type: String,
     required: true,
@@ -16,4 +16,4 @@ const subSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Sub", subSchema);
+module.exports = mongoose.model("Latihan", latihanSchema);

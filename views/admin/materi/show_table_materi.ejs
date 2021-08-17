@@ -16,17 +16,20 @@
           <thead>
             <tr>
               <th>No</th>
-              <th>Judul</th>
+              <th>Judul Materi</th>
+              <th>Judul Sub</th>
+              <th>Option</th>
             </tr>
           </thead>
           <tbody>
-            <% for (let i = 0; i < materi.length; i++) { %>
+            <% for (let i = 0; i < sub.length; i++) { %>
             <tr>
               <td><%= i + 1 %></td>
-              <td><%= materi[i].judul %></td>
+              <td><%= sub[i].materiId.title %></td>
+              <td><%= sub[i].judul %></td>
               <td>
                 <form
-                  action="/admin/materi/<%=materi[i].id%>/delete?_method=DELETE"
+                  action="/admin/sub/<%=sub[i].id%>/delete?_method=DELETE"
                   method="POST"
                 >
                   <button

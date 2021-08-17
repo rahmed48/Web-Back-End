@@ -12,6 +12,12 @@ const materiSchema = new mongoose.Schema({
       ref: "Sub",
     },
   ],
+  latihanId: [
+    {
+      type: ObjectId,
+      ref: "Latihan",
+    },
+  ],
   kataKunci: [
     {
       type: String,
