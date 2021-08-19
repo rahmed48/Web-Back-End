@@ -65,4 +65,20 @@ module.exports = {
       res.status(500).json({ message: "Internal server error" });
     }
   },
+
+  quiz: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const quiz = await Materi.findOne({ _id: id })
+        .populate({
+          path: "ujiId",
+        }).select("_id ujiId")
+      res.status(200).json({
+        quiz,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
 };

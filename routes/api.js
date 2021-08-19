@@ -13,5 +13,6 @@ router.get("/home", apiController.home);
 router.get("/isi-sub-materi/:id", apiController.isiSub);
 router.get("/isi-latihan/:id", apiController.isiLatihan);
 router.get("/detail-materi/:id", apiController.detailMateri);
+router.get("/quiz/:id", apiController.quiz);
 
 module.exports = router;
