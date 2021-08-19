@@ -1,6 +1,7 @@
 const Latihan = require("../models/Latihan");
 const Materi = require("../models/Materi");
 const Sub = require("../models/Sub");
+const Uji = require("../models/Uji");
 
 module.exports = {
   home: async (req, res) => {
@@ -22,6 +23,9 @@ module.exports = {
         .populate({
           path: "latihanId",
           select: "judul isi",
+        })
+        .populate({
+          path: "ujiId",
         })
         .populate({
           path: "subMateriId",

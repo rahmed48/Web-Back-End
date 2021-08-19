@@ -18,6 +18,12 @@ const materiSchema = new mongoose.Schema({
       ref: "Latihan",
     },
   ],
+  ujiId: [
+    {
+      type: ObjectId,
+      ref: "Uji",
+    },
+  ],
   kataKunci: [
     {
       type: String,
