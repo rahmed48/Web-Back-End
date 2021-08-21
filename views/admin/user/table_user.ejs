@@ -22,9 +22,7 @@
           <tr>
             <th>No</th>
             <th>Nama</th>
-            <th>Role</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th>Option</th>
           </tr>
         </thead>
         <tbody>
@@ -32,8 +30,6 @@
           <tr>
             <td><%= i + 1 %></td>
             <td><%= user[i].name %></td>
-            <td><%= user[i].role %></td>
-            <td><%= user[i].status %></td>
             <td>
               <% if (user[i].status == "Non Aktif"){ %>
               <form
@@ -43,7 +39,7 @@
                 <button type="submit" class="btn btn-danger btn-circle btn-sm">
                   <i class="fas fa-trash"></i>
                 </button>
-                <% } else if (user[i].status == "Aktif"){ %>
+                <% } else{ %>
                 <i class="fa fa-minus" aria-hidden="true"></i> <% } %>
               </form>
             </td>

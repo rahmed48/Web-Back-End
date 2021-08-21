@@ -11,10 +11,10 @@ const ujiSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-//   materiId: {
-//     type: ObjectId,
-//     ref: "Materi",
-//   },
+  materiId: {
+    type: ObjectId,
+    ref: "Materi",
+  },
 });
 
 module.exports = mongoose.model("Uji", ujiSchema);

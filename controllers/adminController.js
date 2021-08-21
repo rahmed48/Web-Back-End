@@ -1,11 +1,8 @@
-const Category = require("../models/Category");
-const Item = require("../models/Item");
-const fs = require("fs-extra");
-const path = require("path");
-const Toko = require("../models/Toko");
 const Users = require("../models/Users");
 const Materi = require("../models/Materi");
 const Sub = require("../models/Sub");
+const Uji = require("../models/Uji");
+const Latihan = require("../models/Latihan");
 const bcrypt = require("bcrypt");
 
 module.exports = {
@@ -17,7 +14,7 @@ module.exports = {
       if (req.session.user == null || req.session.user == undefined) {
         res.render("index", {
           alert,
-          title: "My Menu | Login",
+          title: "MTK App | Login",
         });
       } else {
         res.redirect("/admin/dashboard");
@@ -73,7 +70,7 @@ module.exports = {
     } catch (error) {
       req.flash("alertMessage", `${error.message}`);
       req.flash("alertStatus", "danger");
-      res.redirect("/admin/category");
+      res.redirect("/admin/dashboard");
     }
   },
 
@@ -88,7 +85,7 @@ module.exports = {
       const alertStatus = req.flash("alertStatus");
       const alert = { message: alertMessage, status: alertStatus };
       res.render("admin/materi/view_materi", {
-        title: "MTK | Materi",
+        title: "MTK App | Materi",
         sub,
         materi,
         users: req.session.user,
@@ -101,6 +98,7 @@ module.exports = {
       res.redirect("/admin/materi");
     }
   },
+
   addMateri: async (req, res) => {
     try {
       const { judul, isi, materiId } = req.body;
@@ -122,213 +120,154 @@ module.exports = {
     }
   },
 
+  deleteMateri: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const materi = await Sub.findOne({ _id: id });
+      await materi.remove();
+      req.flash("alertMessage", "Success Delete Materi");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/materi");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/materi");
+    }
+  },
+  viewLatihan: async (req, res) => {
+    try {
+      const latihan = await Latihan.find().populate({
+        path: "materiId",
+        select: "title",
+      });
+      const materi = await Materi.find();
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
+      res.render("admin/latihan/view_latihan", {
+        title: "MTK App | Latihan",
+        latihan,
+        materi,
+        users: req.session.user,
+        alert,
+      });
+      console.log(sub);
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/latihan");
+    }
+  },
+  addLatihan: async (req, res) => {
+    try {
+      const { judul, isi, materiId } = req.body;
+      const materi = await Materi.findOne({ _id: materiId });
+      const newLatihan = { judul, isi, materiId };
+
+      const latihan = await Latihan.create(newLatihan);
+
+      materi.latihanId.push({ _id: latihan._id });
+      await materi.save();
+      await latihan.save();
+      req.flash("alertMessage", "Success Add Latihan");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/latihan");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/latihan");
+    }
+  },
+  deleteLatihan: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const latihan = await Latihan.findOne({ _id: id });
+      await latihan.remove();
+      req.flash("alertMessage", "Success Delete Latihan");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/latihan");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/latihan");
+    }
+  },
+
+  viewQuiz: async (req, res) => {
+    try {
+      const quiz = await Uji.find().populate({
+        path: "materiId",
+        select: "title",
+      });
+      const materi = await Materi.find();
+      const alertMessage = req.flash("alertMessage");
+      const alertStatus = req.flash("alertStatus");
+      const alert = { message: alertMessage, status: alertStatus };
+      res.render("admin/quiz/view_quiz", {
+        title: "MTK App | Quiz",
+        quiz,
+        materi,
+        users: req.session.user,
+        alert,
+      });
+      console.log(sub);
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/quiz");
+    }
+  },
+  addQuiz: async (req, res) => {
+    try {
+      const { materiId, question, a, b, c, d, correct_option } = req.body;
+      const materi = await Materi.findOne({ _id: materiId });
+      const newQuiz = {
+        materiId,
+        question,
+        options: [a, b, c, d],
+        correct_option,
+      };
+
+      const quiz = await Uji.create(newQuiz);
+
+      materi.ujiId.push({ _id: quiz._id });
+      await materi.save();
+      await quiz.save();
+      req.flash("alertMessage", "Success Add Quiz");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/quiz");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/quiz");
+    }
+  },
+
+  deleteQuiz: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const quiz = await Uji.findOne({ _id: id });
+      await quiz.remove();
+      req.flash("alertMessage", "Success Delete Quiz");
+      req.flash("alertStatus", "success");
+      res.redirect("/admin/quiz");
+    } catch (error) {
+      req.flash("alertMessage", `${error.message}`);
+      req.flash("alertStatus", "danger");
+      res.redirect("/admin/quiz");
+    }
+  },
+
   viewDashboard: async (req, res) => {
     try {
-      // const member = await Member.find();
-      // const booking = await Booking.find();
-      // const item = await Item.find();
       res.render("admin/dashboard/view_dashboard", {
-        title: "My Menu | Dashboard",
+        title: "MTK App | Dashboard",
         users: req.session.user,
-        // member,
-        // booking,
-        // item,
       });
     } catch (error) {
       res.redirect("/admin/dashboard");
     }
   },
-  //  <---------- MODULE CATEGORY ---------->
-  viewCategory: async (req, res) => {
-    try {
-      const category = await Category.find();
-      const alertMessage = req.flash("alertMessage");
-      const alertStatus = req.flash("alertStatus");
-      const alert = { message: alertMessage, status: alertStatus };
-      // res.json(category);
-      res.render("admin/category/view_category", {
-        category,
-        alert,
-        title: "My Menu | Category",
-        users: req.session.user,
-      });
-    } catch (error) {
-      res.redirect("/admin/category");
-    }
-  },
-  addCategory: async (req, res) => {
-    try {
-      const { name } = req.body;
-      // console.log(name);
-      await Category.create({ name });
-      req.flash("alertMessage", "Success Add Category");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/category");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/category");
-    }
-  },
-  editCategory: async (req, res) => {
-    try {
-      const { id, name } = req.body;
-      const category = await Category.findOne({ _id: id });
-      category.name = name;
-      await category.save();
-      req.flash("alertMessage", "Success Update Category");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/category");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/category");
-    }
-  },
-  deleteCategory: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const category = await Category.findOne({ _id: id });
-      await category.remove();
-      req.flash("alertMessage", "Success Delete Category");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/category");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/category");
-    }
-  },
-  //  <---------- MODULE CATEGORY ---------->
-
-  //  <---------- MODULE ITEM ---------->
-  viewItem: async (req, res) => {
-    try {
-      const item = await Item.find().populate({
-        path: "categoryId",
-        select: "id name",
-      });
-      const category = await Category.find();
-      const alertMessage = req.flash("alertMessage");
-      const alertStatus = req.flash("alertStatus");
-      const alert = { message: alertMessage, status: alertStatus };
-      res.render("admin/item/view_item", {
-        item,
-        alert,
-        category,
-        title: "My Menu | Item",
-        users: req.session.user,
-      });
-    } catch (error) {
-      res.redirect("/admin/item");
-    }
-  },
-
-  addItem: async (req, res) => {
-    try {
-      const { categoryId, nameItem, harga } = req.body;
-      const category = await Category.findOne({ _id: categoryId });
-      const newItem = {
-        categoryId,
-        nameItem,
-        harga,
-        imageUrl: `images/${req.file.filename}`,
-      };
-      const item = await Item.create(newItem);
-      category.itemId.push({ _id: item._id });
-      await category.save();
-      await item.save();
-      req.flash("alertMessage", "Success Add Item");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/item");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/item");
-    }
-  },
-  editItem: async (req, res) => {
-    try {
-      const { id, nameItem, harga } = req.body;
-      const item = await Item.findOne({ _id: id });
-      if (req.file == undefined) {
-        item.nameItem = nameItem;
-        item.harga = harga;
-        await item.save();
-        req.flash("alertMessage", "Success Update Item");
-        req.flash("alertStatus", "success");
-        res.redirect("/admin/item");
-      } else {
-        await fs.unlink(path.join(`public/${item.imageUrl}`));
-        item.nameItem = nameItem;
-        item.harga = harga;
-        item.imageUrl = `images/${req.file.filename}`;
-        await item.save();
-        req.flash("alertMessage", "Success Update Item");
-        req.flash("alertStatus", "success");
-        res.redirect("/admin/item");
-      }
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/item");
-    }
-  },
-  deleteItem: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const item = await Item.findOne({ _id: id });
-      await fs.unlink(path.join(`public/${item.imageUrl}`));
-      await item.remove();
-      req.flash("alertMessage", "Success Delete Item");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/item");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/item");
-    }
-  },
-  //  <---------- MODULE ITEM ---------->
-
-  //  <---------- MODULE TOKO ---------->
-  viewToko: async (req, res) => {
-    try {
-      const toko = await Toko.find();
-      const alertMessage = req.flash("alertMessage");
-      const alertStatus = req.flash("alertStatus");
-      const alert = { message: alertMessage, status: alertStatus };
-      console.log(toko);
-      res.render("admin/toko/view_toko", {
-        title: "My Menu | Toko",
-        alert,
-        toko,
-        users: req.session.user,
-      });
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/toko");
-    }
-  },
-  editToko: async (req, res) => {
-    try {
-      const { id, nameToko, harga } = req.body;
-      const toko = await Toko.findOne({ _id: id });
-      toko.nameToko = nameToko;
-      toko.harga = harga;
-      await toko.save();
-      req.flash("alertMessage", "Success Update Nama Toko");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/toko");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/toko");
-    }
-  },
-  //  <---------- MODULE TOKO ---------->
-
   //  <---------- MODULE USER ---------->
   viewUser: async (req, res) => {
     try {
@@ -376,136 +315,4 @@ module.exports = {
       res.redirect("/admin/user");
     }
   },
-  //  <---------- MODULE USER ---------->
-
-  //  <---------- MODULE ITEM ---------->
-  viewStok: async (req, res) => {
-    try {
-      const item = await Item.find().populate({
-        path: "categoryId",
-        select: "id name",
-      });
-      const category = await Category.find();
-      const alertMessage = req.flash("alertMessage");
-      const alertStatus = req.flash("alertStatus");
-      const alert = { message: alertMessage, status: alertStatus };
-      res.render("admin/stok/view_stok", {
-        item,
-        alert,
-        category,
-        title: "My Menu | Item",
-        users: req.session.user,
-      });
-    } catch (error) {
-      res.redirect("/admin/stok");
-    }
-  },
-  setStokAda: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const setStok = await Item.findOne({ _id: id });
-      setStok.stok = "Ada";
-      await setStok.save();
-      req.flash("alertMessage", "Success Set Stok");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/stok");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/stok");
-    }
-  },
-  setStokKosong: async (req, res) => {
-    try {
-      const { id } = req.params;
-      const setStok = await Item.findOne({ _id: id });
-      setStok.stok = "Kosong";
-      await setStok.save();
-      req.flash("alertMessage", "Success Set Stok");
-      req.flash("alertStatus", "success");
-      res.redirect("/admin/stok");
-    } catch (error) {
-      req.flash("alertMessage", `${error.message}`);
-      req.flash("alertStatus", "danger");
-      res.redirect("/admin/stok");
-    }
-  },
-  //  <---------- MODULE ITEM ---------->
-
-  //  <---------- MODULE PESANAN ---------->
-
-  // viewPesanan: async (req, res) => {
-  //   try {
-  //     const alertMessage = req.flash("alertMessage");
-  //     const alertStatus = req.flash("alertStatus");
-  //     const alert = { message: alertMessage, status: alertStatus };
-  //     const item = await Item.find();
-  //     const cart = await Cart.find();
-  //     const pesanan = await Pesanan.find()
-  //       .populate({
-  //         path: "cartId", select: "id qty itemId",
-  //         populate: {
-  //           path: "itemId", select: "id harga nameItem"
-  //         }
-  //       });
-  //     res.render("admin/pesanan/view_pesanan", {
-  //       title: "My Menu | Booking",
-  //       users: req.session.user,
-  //       alert,
-  //       pesanan,
-  //       cart,
-  //     });
-  //   } catch (error) {
-  //     res.redirect("/admin/pesanan");
-  //   }
-  // },
-  // showDetailBooking: async (req, res) => {
-  //   const { id } = req.params;
-  //   try {
-  //     const alertMessage = req.flash("alertMessage");
-  //     const alertStatus = req.flash("alertStatus");
-  //     const alert = { message: alertMessage, status: alertStatus };
-  //     const booking = await Booking.findOne({ _id: id })
-  //       .populate("memberId")
-  //       .populate("bankId");
-  //     res.render("admin/booking/show_detail_booking", {
-  //       title: "My Menu | Detail Booking",
-  //       user: req.session.user,
-  //       booking,
-  //       alert,
-  //     });
-  //   } catch (error) {
-  //     res.redirect("/admin/booking");
-  //   }
-  // },
-
-  // actionConfirmation: async (req, res) => {
-  //   const { id } = req.params;
-  //   try {
-  //     const booking = await Booking.findOne({ _id: id });
-  //     booking.payments.status = "Accept";
-  //     await booking.save();
-  //     req.flash("alertMessage", "Success Confirmation Pembayaran");
-  //     req.flash("alertStatus", "success");
-  //     res.redirect(`/admin/booking/${id}`);
-  //   } catch (error) {
-  //     res.redirect(`/admin/booking/${id}`);
-  //   }
-  // },
-
-  // actionReject: async (req, res) => {
-  //   const { id } = req.params;
-  //   try {
-  //     const booking = await Booking.findOne({ _id: id });
-  //     booking.payments.status = "Reject";
-  //     await booking.save();
-  //     req.flash("alertMessage", "Success Reject Pembayaran");
-  //     req.flash("alertStatus", "success");
-  //     res.redirect(`/admin/booking/${id}`);
-  //   } catch (error) {
-  //     res.redirect(`/admin/booking/${id}`);
-  //   }
-  // },
-
-  //  <---------- MODULE PESANAN ---------->
 };

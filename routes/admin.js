@@ -12,23 +12,29 @@ router.get("/dashboard", adminController.viewDashboard);
 
 router.get("/materi", adminController.viewMateri);
 router.post("/materi", adminController.addMateri);
-// router.delete("/materi/:id", adminController.deleteCategory);
-// ENDPOINT CATEGORY
+router.delete("/materi/:id", adminController.deleteMateri);
 
-router.get("/category", adminController.viewCategory);
-router.post("/category", adminController.addCategory);
-router.put("/category", adminController.editCategory);
-router.delete("/category/:id", adminController.deleteCategory);
+router.get("/latihan", adminController.viewLatihan);
+router.post("/latihan", adminController.addLatihan);
+router.delete("/latihan/:id", adminController.deleteLatihan);
 
-// // ENDPOINT TOKO
-router.get("/toko", adminController.viewToko);
-router.put("/toko", adminController.editToko);
+router.get("/quiz", adminController.viewQuiz);
+router.post("/quiz", adminController.addQuiz);
+router.delete("/quiz/:id", adminController.deleteQuiz);
+// router.get("/category", adminController.viewCategory);
+// router.post("/category", adminController.addCategory);
+// router.put("/category", adminController.editCategory);
+// router.delete("/category/:id", adminController.deleteCategory);
 
-// ENDPOINT ITEM
-router.get("/item", adminController.viewItem);
-router.post("/item", upload, adminController.addItem);
-router.put("/item", upload, adminController.editItem);
-router.delete("/item/:id", adminController.deleteItem);
+// // // ENDPOINT TOKO
+// router.get("/toko", adminController.viewToko);
+// router.put("/toko", adminController.editToko);
+
+// // ENDPOINT ITEM
+// router.get("/item", adminController.viewItem);
+// router.post("/item", upload, adminController.addItem);
+// router.put("/item", upload, adminController.editItem);
+// router.delete("/item/:id", adminController.deleteItem);
 
 // ENDPOINT USER
 router.get("/user", adminController.viewUser);
@@ -37,9 +43,9 @@ router.delete("/user/:id", adminController.deleteUser);
 // router.put("/user", adminController.editUser);
 
 // ENDPOINT STOK
-router.get("/stok", adminController.viewStok);
-router.delete("/stok/ada/:id", adminController.setStokAda);
-router.delete("/stok/kosong/:id", adminController.setStokKosong);
+// router.get("/stok", adminController.viewStok);
+// router.delete("/stok/ada/:id", adminController.setStokAda);
+// router.delete("/stok/kosong/:id", adminController.setStokKosong);
 
 // ENDPOINT STOK
 // router.get("/pesanan", adminController.viewPesanan);
